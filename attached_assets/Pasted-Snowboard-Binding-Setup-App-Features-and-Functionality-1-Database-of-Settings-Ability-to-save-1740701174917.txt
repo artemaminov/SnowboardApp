@@ -1,0 +1,46 @@
+Snowboard Binding Setup App – Features and Functionality
+
+1. Database of Settings
+	•	Ability to save multiple binding configurations for different riding styles (freestyle, freeride, carving, etc.).
+	•	Custom profile names (e.g., “Freeride – Powder,” “Park Tricks”).
+	•	Last modified date for each setup.
+
+2. Core Setup Parameters
+	•	Binding angles (front and rear) relative to the board.
+	•	Stance width (distance between bindings).
+	•	Mounting holes used (specific numbers or relative positioning).
+	•	Setback – how far the bindings are shifted back from the center.
+	•	Highback height (if adjustable).
+	•	Binding stiffness (if adjustable via straps or spoiler settings).
+	•	Type of shock-absorbing pads (if used).
+
+3. Additional Parameters
+	•	Boot size and board type (wide or standard).
+	•	Rider’s weight and height – for automatic stance recommendations.
+	•	Automatic calculation of boot centering on the board.
+	•	Strap adjustments (pressure on the upper and lower foot).
+	•	Setup recommendations based on weather conditions (e.g., softer bindings for powder, stiffer for carving).
+
+4. Visualization
+	•	Graphical representation of the stance – top-down view with angles and width.
+	•	Ability to modify settings through an interactive UI (sliders, buttons).
+	•	3D model of the board and bindings for a more precise setup visualization.
+
+5. Interactive Features
+	•	Photo gallery to save images of specific setups (e.g., how the stance looks on the board).
+	•	QR code for quick sharing of settings with other riders.
+	•	Comparison mode – to highlight differences between two setups.
+
+6. Integrations & Convenience
+	•	Export/import settings (to cloud, text file, JSON).
+	•	Setup history tracking – ability to revert to previous configurations.
+	•	Cloud sync (iCloud or other services).
+	•	Reminders to adjust settings (e.g., after long sessions, to try different angles).
+	•	Apple Watch support to quickly check settings on the go.
+
+7. Future Features
+	•	Automated recommendations (based on input parameters, AI suggestions, or a database of popular setups).
+	•	Community sharing – allowing users to share and explore setups from other riders.
+	•	GPS & weather integration – stance recommendations based on slopes and current weather conditions.
+
+What do you think? Anything to add or modify?
