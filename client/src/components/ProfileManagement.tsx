@@ -30,7 +30,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Trash2, Save, Download } from "lucide-react";
+import { Trash2, Save, Download, Upload } from "lucide-react";
 
 export default function ProfileManagement() {
   const { toast } = useToast();
@@ -128,6 +128,37 @@ export default function ProfileManagement() {
     }
   };
 
+  const loadProfile = (profile: BindingProfile) => {
+    try {
+      // Reset the form with the profile values
+      parentForm.reset({
+        name: profile.name,
+        frontAngle: profile.frontAngle,
+        backAngle: profile.backAngle,
+        stanceWidth: profile.stanceWidth,
+        setback: profile.setback,
+        bootSize: profile.bootSize,
+        riderWeight: profile.riderWeight,
+        riderHeight: profile.riderHeight,
+        boardType: profile.boardType,
+        highbackHeight: profile.highbackHeight ?? undefined,
+        bindingStiffness: profile.bindingStiffness ?? undefined,
+      });
+
+      toast({
+        title: "Profile Loaded",
+        description: `Loaded settings from "${profile.name}"`,
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to load profile settings.",
+      });
+      console.error("Profile load error:", error);
+    }
+  };
+
   const exportProfile = (profile: BindingProfile) => {
     try {
       const data = JSON.stringify(profile, null, 2);
@@ -198,7 +229,7 @@ export default function ProfileManagement() {
             <TableRow>
               <TableHead>Name</TableHead>
               <TableHead>Last Modified</TableHead>
-              <TableHead className="w-[100px]">Actions</TableHead>
+              <TableHead className="w-[140px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -213,7 +244,16 @@ export default function ProfileManagement() {
                     <Button
                       variant="ghost"
                       size="icon"
+                      onClick={() => loadProfile(profile)}
+                      title="Load Profile"
+                    >
+                      <Upload className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
                       onClick={() => exportProfile(profile)}
+                      title="Export Profile"
                     >
                       <Download className="w-4 h-4" />
                     </Button>
@@ -222,6 +262,7 @@ export default function ProfileManagement() {
                       size="icon"
                       disabled={deleteProfile.isPending}
                       onClick={() => deleteProfile.mutate(profile.id)}
+                      title="Delete Profile"
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
