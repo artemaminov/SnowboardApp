@@ -35,24 +35,39 @@ export default function BindingCanvas() {
     // Calculate binding positions
     const stanceWidth = (values.stanceWidth || 50) * 4;
     const setback = ((values.setback || 0) * 10);
-    
-    // Draw bindings
-    ctx.save();
-    
-    // Front binding
-    ctx.translate(-stanceWidth/2 + setback, 0);
-    ctx.rotate((values.frontAngle || 0) * Math.PI / 180);
-    ctx.fillStyle = "#dc2626";
-    ctx.fillRect(-BINDING_LENGTH/2, -BINDING_WIDTH/2, BINDING_LENGTH, BINDING_WIDTH);
-    ctx.restore();
 
-    // Back binding
-    ctx.save();
-    ctx.translate(stanceWidth/2 + setback, 0);
-    ctx.rotate((values.backAngle || 0) * Math.PI / 180);
-    ctx.fillStyle = "#dc2626";
-    ctx.fillRect(-BINDING_LENGTH/2, -BINDING_WIDTH/2, BINDING_LENGTH, BINDING_WIDTH);
-    ctx.restore();
+    // Function to draw a binding triangle
+    const drawBinding = (x: number, y: number, angle: number) => {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(angle * Math.PI / 180);
+
+      // Draw binding triangle
+      ctx.beginPath();
+      ctx.moveTo(-BINDING_LENGTH/2, -BINDING_WIDTH/2); // Back left
+      ctx.lineTo(BINDING_LENGTH/2, 0); // Front center (toe)
+      ctx.lineTo(-BINDING_LENGTH/2, BINDING_WIDTH/2); // Back right
+      ctx.closePath();
+      ctx.fillStyle = "#dc2626";
+      ctx.fill();
+
+      // Add toe indicator
+      ctx.beginPath();
+      ctx.moveTo(BINDING_LENGTH/2 - 20, -10);
+      ctx.lineTo(BINDING_LENGTH/2, 0);
+      ctx.lineTo(BINDING_LENGTH/2 - 20, 10);
+      ctx.strokeStyle = "#fff";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.restore();
+    };
+
+    // Draw front binding
+    drawBinding(-stanceWidth/2 + setback, 0, values.frontAngle || 0);
+
+    // Draw back binding
+    drawBinding(stanceWidth/2 + setback, 0, values.backAngle || 0);
 
     // Draw measurements
     ctx.font = "14px Arial";
