@@ -24,9 +24,10 @@ export default function BindingCanvas() {
     // Clear canvas
     ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-    // Transform to center
+    // Transform to center and rotate 180 degrees
     ctx.save();
     ctx.translate(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
+    ctx.rotate(Math.PI); // Rotate 180 degrees
 
     // Draw board
     ctx.fillStyle = "#2563eb";
@@ -71,10 +72,13 @@ export default function BindingCanvas() {
     drawBinding(stanceWidth/2 + setback, 0, values.backAngle || 0);
 
     // Draw measurements
+    ctx.save();
+    ctx.rotate(Math.PI); // Rotate text back to be readable
     ctx.font = "14px Arial";
     ctx.fillStyle = "#000";
     ctx.fillText(`${values.stanceWidth || 50}cm`, 0, BOARD_WIDTH);
     ctx.fillText(`${values.setback || 0}cm`, setback, -BOARD_WIDTH);
+    ctx.restore();
 
     ctx.restore();
   }, [values]);
