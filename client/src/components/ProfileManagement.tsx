@@ -51,7 +51,11 @@ export default function ProfileManagement() {
 
   const createProfile = useMutation({
     mutationFn: async (data: InsertBindingProfile) => {
-      await apiRequest("POST", "/api/profiles", data);
+      const response = await apiRequest("POST", "/api/profiles", data);
+      if (!response.ok) {
+        throw new Error("Failed to save profile");
+      }
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/profiles"] });
@@ -91,30 +95,58 @@ export default function ProfileManagement() {
     },
   });
 
-  const onSubmit = (nameData: { name: string }) => {
-    // Get current values from parent form
-    const currentValues = parentForm.getValues();
+  const onSubmit = async (nameData: { name: string }) => {
+    try {
+      // Get current values from parent form
+      const currentValues = parentForm.getValues();
 
-    // Combine name with current binding settings
-    const profileData: InsertBindingProfile = {
-      ...currentValues,
-      name: nameData.name,
-    };
+      // Validate the form data
+      const isValid = await parentForm.trigger();
+      if (!isValid) {
+        toast({
+          variant: "destructive",
+          title: "Validation Error",
+          description: "Please check all binding settings are valid before saving.",
+        });
+        return;
+      }
 
-    createProfile.mutate(profileData);
+      // Combine name with current binding settings
+      const profileData: InsertBindingProfile = {
+        ...currentValues,
+        name: nameData.name,
+      };
+
+      createProfile.mutate(profileData);
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to save profile. Please try again.",
+      });
+      console.error("Profile save error:", error);
+    }
   };
 
   const exportProfile = (profile: BindingProfile) => {
-    const data = JSON.stringify(profile, null, 2);
-    const blob = new Blob([data], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${profile.name}-binding-profile.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    try {
+      const data = JSON.stringify(profile, null, 2);
+      const blob = new Blob([data], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${profile.name}-binding-profile.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Export Error",
+        description: "Failed to export profile.",
+      });
+    }
   };
 
   return (
