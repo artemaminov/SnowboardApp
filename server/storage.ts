@@ -1,4 +1,6 @@
 import { bindingProfiles, type BindingProfile, type InsertBindingProfile } from "@shared/schema";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 
 export interface IStorage {
   getProfile(id: number): Promise<BindingProfile | undefined>;
@@ -8,51 +10,44 @@ export interface IStorage {
   deleteProfile(id: number): Promise<boolean>;
 }
 
-export class MemStorage implements IStorage {
-  private profiles: Map<number, BindingProfile>;
-  private currentId: number;
-
-  constructor() {
-    this.profiles = new Map();
-    this.currentId = 1;
-  }
-
+export class DatabaseStorage implements IStorage {
   async getProfile(id: number): Promise<BindingProfile | undefined> {
-    return this.profiles.get(id);
-  }
-
-  async getAllProfiles(): Promise<BindingProfile[]> {
-    return Array.from(this.profiles.values());
-  }
-
-  async createProfile(insertProfile: InsertBindingProfile): Promise<BindingProfile> {
-    const id = this.currentId++;
-    const profile: BindingProfile = {
-      ...insertProfile,
-      id,
-      lastModified: new Date(),
-    };
-    this.profiles.set(id, profile);
+    const [profile] = await db.select().from(bindingProfiles).where(eq(bindingProfiles.id, id));
     return profile;
   }
 
-  async updateProfile(id: number, updates: Partial<InsertBindingProfile>): Promise<BindingProfile | undefined> {
-    const existing = this.profiles.get(id);
-    if (!existing) return undefined;
+  async getAllProfiles(): Promise<BindingProfile[]> {
+    return await db.select().from(bindingProfiles);
+  }
 
-    const updated: BindingProfile = {
-      ...existing,
-      ...updates,
-      id,
-      lastModified: new Date(),
-    };
-    this.profiles.set(id, updated);
+  async createProfile(profile: InsertBindingProfile): Promise<BindingProfile> {
+    const [created] = await db.insert(bindingProfiles).values({
+      ...profile,
+      highbackHeight: profile.highbackHeight ?? null,
+      bindingStiffness: profile.bindingStiffness ?? null,
+    }).returning();
+    return created;
+  }
+
+  async updateProfile(id: number, updates: Partial<InsertBindingProfile>): Promise<BindingProfile | undefined> {
+    const [updated] = await db
+      .update(bindingProfiles)
+      .set({
+        ...updates,
+        lastModified: new Date(),
+      })
+      .where(eq(bindingProfiles.id, id))
+      .returning();
     return updated;
   }
 
   async deleteProfile(id: number): Promise<boolean> {
-    return this.profiles.delete(id);
+    const [deleted] = await db
+      .delete(bindingProfiles)
+      .where(eq(bindingProfiles.id, id))
+      .returning();
+    return !!deleted;
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();
