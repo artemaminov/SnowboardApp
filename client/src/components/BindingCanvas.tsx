@@ -40,7 +40,8 @@ export default function BindingCanvas() {
     const drawBinding = (x: number, y: number, angle: number) => {
       ctx.save();
       ctx.translate(x, y);
-      ctx.rotate(angle * Math.PI / 180);
+      // Add 90 degrees to make 0 perpendicular to board
+      ctx.rotate((angle + 90) * Math.PI / 180);
 
       // Draw binding triangle
       ctx.beginPath();
