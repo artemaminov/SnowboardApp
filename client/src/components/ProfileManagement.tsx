@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
+import { useForm, useFormContext } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { bindingProfileFormSchema, type InsertBindingProfile, type BindingProfile } from "@shared/schema";
 import { queryClient, apiRequest } from "@/lib/queryClient";
@@ -11,6 +11,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -34,9 +35,14 @@ import { Trash2, Save, Download } from "lucide-react";
 export default function ProfileManagement() {
   const { toast } = useToast();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const parentForm = useFormContext<InsertBindingProfile>();
 
-  const form = useForm<InsertBindingProfile>({
-    resolver: zodResolver(bindingProfileFormSchema),
+  // Local form just for the profile name
+  const nameForm = useForm<{ name: string }>({
+    resolver: zodResolver(bindingProfileFormSchema.pick({ name: true })),
+    defaultValues: {
+      name: "",
+    },
   });
 
   const { data: profiles } = useQuery<BindingProfile[]>({
@@ -50,9 +56,17 @@ export default function ProfileManagement() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/profiles"] });
       setDialogOpen(false);
+      nameForm.reset();
       toast({
         title: "Profile Created",
         description: "Your binding profile has been saved successfully.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message || "Failed to save profile",
       });
     },
   });
@@ -68,10 +82,26 @@ export default function ProfileManagement() {
         description: "The binding profile has been removed.",
       });
     },
+    onError: (error) => {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message || "Failed to delete profile",
+      });
+    },
   });
 
-  const onSubmit = (data: InsertBindingProfile) => {
-    createProfile.mutate(data);
+  const onSubmit = (nameData: { name: string }) => {
+    // Get current values from parent form
+    const currentValues = parentForm.getValues();
+
+    // Combine name with current binding settings
+    const profileData: InsertBindingProfile = {
+      ...currentValues,
+      name: nameData.name,
+    };
+
+    createProfile.mutate(profileData);
   };
 
   const exportProfile = (profile: BindingProfile) => {
@@ -102,10 +132,10 @@ export default function ProfileManagement() {
             <DialogHeader>
               <DialogTitle>Save Binding Profile</DialogTitle>
             </DialogHeader>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <Form {...nameForm}>
+              <form onSubmit={nameForm.handleSubmit(onSubmit)} className="space-y-4">
                 <FormField
-                  control={form.control}
+                  control={nameForm.control}
                   name="name"
                   render={({ field }) => (
                     <FormItem>
@@ -113,10 +143,17 @@ export default function ProfileManagement() {
                       <FormControl>
                         <Input {...field} placeholder="e.g. Park Setup" />
                       </FormControl>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
-                <Button type="submit" className="w-full">Save Profile</Button>
+                <Button 
+                  type="submit" 
+                  className="w-full"
+                  disabled={createProfile.isPending}
+                >
+                  {createProfile.isPending ? "Saving..." : "Save Profile"}
+                </Button>
               </form>
             </Form>
           </DialogContent>
@@ -151,6 +188,7 @@ export default function ProfileManagement() {
                     <Button
                       variant="ghost"
                       size="icon"
+                      disabled={deleteProfile.isPending}
                       onClick={() => deleteProfile.mutate(profile.id)}
                     >
                       <Trash2 className="w-4 h-4" />
