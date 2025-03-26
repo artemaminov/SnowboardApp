@@ -11,10 +11,22 @@ const BINDING_LENGTH = 120;
 
 export default function BindingCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const bindingImageRef = useRef<HTMLImageElement | null>(null);
   const form = useFormContext<InsertBindingProfile>();
   const values = form.watch();
 
+  // Load binding image
   useEffect(() => {
+    const img = new Image();
+    img.src = "/src/assets/binding.png";
+    img.onload = () => {
+      bindingImageRef.current = img;
+      // Redraw canvas when image loads
+      updateCanvas();
+    };
+  }, []);
+
+  const updateCanvas = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -38,8 +50,8 @@ export default function BindingCanvas() {
     const setbackDirection = values.stance === "goofy" ? 1 : -1; // Positive for goofy (right), negative for regular (left)
     const setback = ((values.setback || 0) * setbackDirection); // Already in mm, multiply by direction
 
-    // Function to draw a binding triangle
-    const drawBinding = (x: number, y: number, angle: number) => {
+    // Function to draw a binding triangle (used for left binding)
+    const drawTriangleBinding = (x: number, y: number, angle: number) => {
       ctx.save();
       ctx.translate(x, y);
       // Add 90 degrees to make 0 perpendicular to board
@@ -66,11 +78,33 @@ export default function BindingCanvas() {
       ctx.restore();
     };
 
+    // Function to draw the image binding (used for right binding)
+    const drawImageBinding = (x: number, y: number, angle: number) => {
+      if (!bindingImageRef.current) return;
+
+      ctx.save();
+      ctx.translate(x, y);
+      // Add 90 degrees to make 0 perpendicular to board, plus 180 to flip image right side up
+      ctx.rotate((angle + 270) * Math.PI / 180);
+
+      // Scale and draw the image
+      const scale = 0.5; // Adjust scale as needed
+      ctx.drawImage(
+        bindingImageRef.current,
+        -BINDING_LENGTH/2 * scale,
+        -BINDING_WIDTH/2 * scale,
+        BINDING_LENGTH * scale,
+        BINDING_WIDTH * scale
+      );
+
+      ctx.restore();
+    };
+
     // Draw left binding (was previously right)
-    drawBinding(stanceWidth/2 + setback, 0, values.frontAngle || 0);
+    drawTriangleBinding(stanceWidth/2 + setback, 0, values.frontAngle || 0);
 
     // Draw right binding (was previously left)
-    drawBinding(-stanceWidth/2 + setback, 0, values.backAngle || 0);
+    drawImageBinding(-stanceWidth/2 + setback, 0, values.backAngle || 0);
 
     // Draw measurements
     ctx.save();
@@ -82,6 +116,10 @@ export default function BindingCanvas() {
     ctx.restore();
 
     ctx.restore();
+  };
+
+  useEffect(() => {
+    updateCanvas();
   }, [values]);
 
   return (
