@@ -22,7 +22,7 @@ export default function BindingForm() {
           name="frontAngle"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Front Binding Angle ({field.value}°)</FormLabel>
+              <FormLabel>Left Binding Angle ({field.value}°)</FormLabel>
               <FormControl>
                 <Slider
                   min={-45}
@@ -41,7 +41,7 @@ export default function BindingForm() {
           name="backAngle"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Back Binding Angle ({field.value}°)</FormLabel>
+              <FormLabel>Right Binding Angle ({field.value}°)</FormLabel>
               <FormControl>
                 <Slider
                   min={-45}
