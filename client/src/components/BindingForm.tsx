@@ -16,7 +16,7 @@ export default function BindingForm() {
   const form = useFormContext<InsertBindingProfile>();
   const stance = form.watch("stance");
 
-  // Update angles when stance changes
+  // Update angles when stance changes - only mirror values, don't reset to defaults
   useEffect(() => {
     const currentFront = form.getValues("frontAngle");
     const currentBack = form.getValues("backAngle");
@@ -25,11 +25,8 @@ export default function BindingForm() {
       form.setValue("frontAngle", -currentBack);
       form.setValue("backAngle", -currentFront);
     } else {
-      // Set default regular stance values if coming from goofy
-      if (currentFront < 0) {
-        form.setValue("frontAngle", 3);
-        form.setValue("backAngle", 9);
-      }
+      form.setValue("frontAngle", -currentBack);
+      form.setValue("backAngle", -currentFront);
     }
   }, [stance]);
 
