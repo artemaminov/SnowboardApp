@@ -9,26 +9,16 @@ const BOARD_WIDTH = 160;
 const BINDING_WIDTH = 100;
 const BINDING_LENGTH = 120;
 
-// SVG binding path
-const BINDING_SVG = `
-  <svg width="200" height="300" viewBox="0 0 200 300" xmlns="http://www.w3.org/2000/svg">
-    <path d="M20,150 L100,20 L180,150 L180,250 C180,270 160,290 140,290 L60,290 C40,290 20,270 20,250 Z" 
-          fill="black" stroke="gray" stroke-width="2"/>
-    <path d="M60,50 L140,50 L140,100 L60,100 Z" 
-          fill="gray" stroke="black" stroke-width="2"/>
-  </svg>
-`;
-
 export default function BindingCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const bindingImageRef = useRef<HTMLImageElement | null>(null);
   const form = useFormContext<InsertBindingProfile>();
   const values = form.watch();
 
-  // Load binding SVG
+  // Load binding image
   useEffect(() => {
     const img = new Image();
-    img.src = `data:image/svg+xml;base64,${btoa(BINDING_SVG)}`;
+    img.src = "/attached_assets/image_1742969172193.png";
     img.onload = () => {
       bindingImageRef.current = img;
       updateCanvas();
@@ -87,8 +77,8 @@ export default function BindingCanvas() {
       ctx.restore();
     };
 
-    // Function to draw the SVG binding (used for right binding)
-    const drawSvgBinding = (x: number, y: number, angle: number) => {
+    // Function to draw the actual binding image (used for right binding)
+    const drawBindingImage = (x: number, y: number, angle: number) => {
       if (!bindingImageRef.current) return;
 
       ctx.save();
@@ -96,14 +86,16 @@ export default function BindingCanvas() {
       // Add 90 degrees to make 0 perpendicular to board, plus 180 to flip image right side up
       ctx.rotate((angle + 270) * Math.PI / 180);
 
-      // Scale and draw the SVG
+      // Scale and draw the image
       const scale = 0.4; // Adjust scale as needed
+      const imageWidth = BINDING_LENGTH * scale;
+      const imageHeight = BINDING_WIDTH * scale;
       ctx.drawImage(
         bindingImageRef.current,
-        -BINDING_LENGTH/2 * scale,
-        -BINDING_WIDTH/2 * scale,
-        BINDING_LENGTH * scale,
-        BINDING_WIDTH * scale
+        -imageWidth/2,
+        -imageHeight/2,
+        imageWidth,
+        imageHeight
       );
 
       ctx.restore();
@@ -113,7 +105,7 @@ export default function BindingCanvas() {
     drawTriangleBinding(stanceWidth/2 + setback, 0, values.frontAngle || 0);
 
     // Draw right binding (back)
-    drawSvgBinding(-stanceWidth/2 + setback, 0, values.backAngle || 0);
+    drawBindingImage(-stanceWidth/2 + setback, 0, values.backAngle || 0);
 
     // Draw measurements
     ctx.save();
