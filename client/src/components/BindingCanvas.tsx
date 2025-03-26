@@ -65,11 +65,11 @@ export default function BindingCanvas() {
       ctx.restore();
     };
 
-    // Draw left binding
-    drawBinding(-stanceWidth/2 + setback, 0, values.frontAngle || 0);
+    // Draw left binding (was previously right)
+    drawBinding(stanceWidth/2 + setback, 0, values.frontAngle || 0);
 
-    // Draw right binding
-    drawBinding(stanceWidth/2 + setback, 0, values.backAngle || 0);
+    // Draw right binding (was previously left)
+    drawBinding(-stanceWidth/2 + setback, 0, values.backAngle || 0);
 
     // Draw measurements
     ctx.save();
