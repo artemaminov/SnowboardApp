@@ -35,7 +35,8 @@ export default function BindingCanvas() {
 
     // Calculate binding positions
     const stanceWidth = (values.stanceWidth || 50) * 4;
-    const setback = ((values.setback || 0) * 10);
+    const setbackDirection = values.stance === "goofy" ? -1 : 1; // Negative for goofy (left), positive for regular (right)
+    const setback = ((values.setback || 0) * setbackDirection); // Already in mm, multiply by direction
 
     // Function to draw a binding triangle
     const drawBinding = (x: number, y: number, angle: number) => {
@@ -77,7 +78,7 @@ export default function BindingCanvas() {
     ctx.font = "14px Arial";
     ctx.fillStyle = "#000";
     ctx.fillText(`${values.stanceWidth || 50}cm`, 0, BOARD_WIDTH);
-    ctx.fillText(`${values.setback || 0}cm`, setback, -BOARD_WIDTH);
+    ctx.fillText(`${values.setback || 0}mm`, setback, -BOARD_WIDTH);
     ctx.restore();
 
     ctx.restore();

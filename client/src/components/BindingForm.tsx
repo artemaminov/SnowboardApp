@@ -112,14 +112,14 @@ export default function BindingForm() {
           name="setback"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Setback ({field.value}cm)</FormLabel>
+              <FormLabel>Setback ({field.value}mm)</FormLabel>
               <FormControl>
                 <Slider
-                  min={-10}
-                  max={10}
+                  min={0}
+                  max={700}
                   step={0.5}
-                  value={[field.value]}
-                  onValueChange={([value]) => field.onChange(value)}
+                  value={[field.value * 10]}
+                  onValueChange={([value]) => field.onChange(value / 10)}
                 />
               </FormControl>
             </FormItem>
