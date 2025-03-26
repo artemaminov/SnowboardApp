@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useFormContext } from "react-hook-form";
 import type { InsertBindingProfile } from "@shared/schema";
 import {
@@ -15,9 +15,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 export default function BindingForm() {
   const form = useFormContext<InsertBindingProfile>();
   const stance = form.watch("stance");
+  const isFirstRender = useRef(true);
 
   // Update angles when stance changes - only mirror values, don't reset to defaults
   useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
     const currentFront = form.getValues("frontAngle");
     const currentBack = form.getValues("backAngle");
 
