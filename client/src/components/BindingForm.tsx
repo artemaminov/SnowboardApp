@@ -21,13 +21,9 @@ export default function BindingForm() {
     const currentFront = form.getValues("frontAngle");
     const currentBack = form.getValues("backAngle");
 
-    if (stance === "goofy") {
-      form.setValue("frontAngle", -currentBack);
-      form.setValue("backAngle", -currentFront);
-    } else {
-      form.setValue("frontAngle", -currentBack);
-      form.setValue("backAngle", -currentFront);
-    }
+    // Simply negate both angles when stance changes
+    form.setValue("frontAngle", -currentFront);
+    form.setValue("backAngle", -currentBack);
   }, [stance]);
 
   return (
