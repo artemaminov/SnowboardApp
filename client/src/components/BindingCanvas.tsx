@@ -18,7 +18,7 @@ export default function BindingCanvas() {
   // Load binding image
   useEffect(() => {
     const img = new Image();
-    img.src = "/binding.png";
+    img.src = "attached_assets/image_1742969172193.png";
     img.onload = () => {
       bindingImageRef.current = img;
       updateCanvas();
