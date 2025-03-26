@@ -58,8 +58,8 @@ export default function BindingForm() {
               <FormLabel>Left Binding Angle ({field.value}°)</FormLabel>
               <FormControl>
                 <Slider
-                  min={-45}
-                  max={45}
+                  min={-36}
+                  max={36}
                   step={1}
                   value={[field.value]}
                   onValueChange={([value]) => field.onChange(value)}
@@ -77,8 +77,8 @@ export default function BindingForm() {
               <FormLabel>Right Binding Angle ({field.value}°)</FormLabel>
               <FormControl>
                 <Slider
-                  min={-45}
-                  max={45}
+                  min={-36}
+                  max={36}
                   step={1}
                   value={[field.value]}
                   onValueChange={([value]) => field.onChange(value)}
