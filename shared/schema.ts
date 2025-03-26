@@ -31,7 +31,7 @@ export type BindingProfile = typeof bindingProfiles.$inferSelect;
 export const bindingProfileFormSchema = insertBindingProfileSchema.extend({
   frontAngle: z.number().min(-36).max(36),
   backAngle: z.number().min(-36).max(36),
-  stanceWidth: z.number().min(0).max(100),
+  stanceWidth: z.number().min(38).max(66),
   setback: z.number().min(-10).max(10),
   bootSize: z.number().min(4).max(15),
   riderWeight: z.number().min(30).max(200),

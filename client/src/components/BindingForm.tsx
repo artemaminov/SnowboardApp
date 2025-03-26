@@ -96,8 +96,8 @@ export default function BindingForm() {
               <FormLabel>Stance Width ({field.value}cm)</FormLabel>
               <FormControl>
                 <Slider
-                  min={35}
-                  max={65}
+                  min={38}
+                  max={66}
                   step={1}
                   value={[field.value]}
                   onValueChange={([value]) => field.onChange(value)}
