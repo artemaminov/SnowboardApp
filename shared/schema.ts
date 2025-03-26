@@ -15,6 +15,7 @@ export const bindingProfiles = pgTable("binding_profiles", {
   boardType: text("board_type").notNull(),
   highbackHeight: real("highback_height"),
   bindingStiffness: integer("binding_stiffness"),
+  stance: text("stance").notNull().default("regular"),
   lastModified: timestamp("last_modified").notNull().defaultNow(),
 });
 
@@ -36,6 +37,7 @@ export const bindingProfileFormSchema = insertBindingProfileSchema.extend({
   riderWeight: z.number().min(30).max(200),
   riderHeight: z.number().min(120).max(220),
   boardType: z.enum(["standard", "wide"]),
+  stance: z.enum(["regular", "goofy"]),
   highbackHeight: z.number().min(0).max(10).optional(),
   bindingStiffness: z.number().min(1).max(10).optional(),
 });

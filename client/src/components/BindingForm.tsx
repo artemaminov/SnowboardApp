@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 import type { InsertBindingProfile } from "@shared/schema";
 import {
@@ -13,10 +14,49 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 export default function BindingForm() {
   const form = useFormContext<InsertBindingProfile>();
+  const stance = form.watch("stance");
+
+  // Update angles when stance changes
+  useEffect(() => {
+    const currentFront = form.getValues("frontAngle");
+    const currentBack = form.getValues("backAngle");
+
+    if (stance === "goofy") {
+      form.setValue("frontAngle", -currentBack);
+      form.setValue("backAngle", -currentFront);
+    } else {
+      // Set default regular stance values if coming from goofy
+      if (currentFront < 0) {
+        form.setValue("frontAngle", 3);
+        form.setValue("backAngle", 9);
+      }
+    }
+  }, [stance]);
 
   return (
     <Form {...form}>
       <form className="space-y-4">
+        <FormField
+          control={form.control}
+          name="stance"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Stance</FormLabel>
+              <Select onValueChange={field.onChange} value={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="regular">Regular</SelectItem>
+                  <SelectItem value="goofy">Goofy</SelectItem>
+                </SelectContent>
+              </Select>
+            </FormItem>
+          )}
+        />
+
         <FormField
           control={form.control}
           name="frontAngle"

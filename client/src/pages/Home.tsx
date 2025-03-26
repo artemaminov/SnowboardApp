@@ -10,14 +10,15 @@ import { bindingProfileFormSchema, type InsertBindingProfile } from "@shared/sch
 
 const defaultValues: InsertBindingProfile = {
   name: "",
-  frontAngle: 15,
-  backAngle: -15,
+  frontAngle: 3,  // Default for regular stance
+  backAngle: 9,   // Default for regular stance
   stanceWidth: 50,
   setback: 0,
   bootSize: 9,
   riderWeight: 70,
   riderHeight: 175,
   boardType: "standard",
+  stance: "regular",
   highbackHeight: 5,
   bindingStiffness: 5,
 };
