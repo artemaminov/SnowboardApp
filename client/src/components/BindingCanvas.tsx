@@ -100,8 +100,8 @@ export default function BindingCanvas() {
       
       // If image is available, use it; otherwise fall back to a triangle with different color
       if (bindingImageRef.current && isInitializedRef.current) {
-        // Add 180 degrees to flip image right side up
-        ctx.rotate((angle + 180) * Math.PI / 180);
+        // Add 90 degrees to make 0 perpendicular to board, plus 180 to flip image right side up
+        ctx.rotate((angle + 270) * Math.PI / 180);
   
         // Scale and draw the image to fit binding dimensions
         const scaleWidth = BINDING_WIDTH;
