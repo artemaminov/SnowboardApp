@@ -50,22 +50,21 @@ export default function BindingCanvas() {
     ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
     // Transform to center and rotate 180 degrees
+    // Transform to center and rotate 180 degrees
     ctx.save();
+    ctx.translate(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
+    ctx.rotate(Math.PI); // Rotate 180 degrees
+
     const boardImage = new Image();
     boardImage.src = './snowboard.png';
     boardImage.onload = () => {
       ctx.save();
-      ctx.translate(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
-      ctx.rotate(Math.PI); // Rotate 180 degrees
       ctx.rotate(Math.PI / 2); // Rotate 90 degrees clockwise
-      
       const aspectRatio = boardImage.width / boardImage.height;
       const height = BOARD_LENGTH;
       const width = height * aspectRatio;
       ctx.drawImage(boardImage, -width/2, -height/2, width, height);
       ctx.restore();
-      
-      // Redraw bindings after board loads
       drawBindings();
     };
 
