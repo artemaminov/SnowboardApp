@@ -122,8 +122,8 @@ export default function BindingCanvas() {
         }
 
         // Scale and draw the image to fit binding dimensions
-        const scaleWidth = BINDING_WIDTH;
-        const scaleHeight = BINDING_LENGTH;
+        const scaleWidth = BINDING_WIDTH * 1.2;
+        const scaleHeight = BINDING_LENGTH * 1.2;
 
         ctx.drawImage(
           bindingImageRef.current,
