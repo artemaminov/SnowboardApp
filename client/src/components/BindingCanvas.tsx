@@ -60,7 +60,10 @@ export default function BindingCanvas() {
     boardImage.onload = () => {
       ctx.save();
       ctx.rotate(Math.PI / 2); // Rotate 90 degrees clockwise
-      ctx.drawImage(boardImage, -BOARD_WIDTH/2, -BOARD_LENGTH/2, BOARD_WIDTH, BOARD_LENGTH);
+      const aspectRatio = boardImage.width / boardImage.height;
+      const height = BOARD_LENGTH;
+      const width = height * aspectRatio;
+      ctx.drawImage(boardImage, -width/2, -height/2, width, height);
       ctx.restore();
       
       // Redraw everything else after board image loads
@@ -119,8 +122,8 @@ export default function BindingCanvas() {
         }
 
         // Scale and draw the image to fit binding dimensions
-        const scaleWidth = BINDING_WIDTH * 1.2;
-        const scaleHeight = BINDING_LENGTH * 1.2;
+        const scaleWidth = BINDING_WIDTH;
+        const scaleHeight = BINDING_LENGTH;
 
         ctx.drawImage(
           bindingImageRef.current,
