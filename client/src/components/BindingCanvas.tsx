@@ -58,7 +58,10 @@ export default function BindingCanvas() {
     const boardImage = new Image();
     boardImage.src = './snowboard.png';
     boardImage.onload = () => {
-      ctx.drawImage(boardImage, -BOARD_LENGTH/2, -BOARD_WIDTH/2, BOARD_LENGTH, BOARD_WIDTH);
+      ctx.save();
+      ctx.rotate(Math.PI / 2); // Rotate 90 degrees clockwise
+      ctx.drawImage(boardImage, -BOARD_WIDTH/2, -BOARD_LENGTH/2, BOARD_WIDTH, BOARD_LENGTH);
+      ctx.restore();
       
       // Redraw everything else after board image loads
       drawBindings();
