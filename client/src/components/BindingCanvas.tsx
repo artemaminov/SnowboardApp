@@ -18,12 +18,10 @@ export default function BindingCanvas() {
   // Load binding image
   useEffect(() => {
     const img = new Image();
-    img.src = "../../attached_assets/image_1742969172193.png";
-    img.onerror = (e) => {
-      console.error("Error loading binding image:", e);
-    };
+    img.src = "/src/assets/binding.png";
     img.onload = () => {
       bindingImageRef.current = img;
+      // Redraw canvas when image loads
       updateCanvas();
     };
   }, []);
@@ -80,12 +78,9 @@ export default function BindingCanvas() {
       ctx.restore();
     };
 
-    // Function to draw the actual binding image (used for right binding)
-    const drawBindingImage = (x: number, y: number, angle: number) => {
-      if (!bindingImageRef.current) {
-        console.log("No binding image loaded yet");
-        return;
-      }
+    // Function to draw the image binding (used for right binding)
+    const drawImageBinding = (x: number, y: number, angle: number) => {
+      if (!bindingImageRef.current) return;
 
       ctx.save();
       ctx.translate(x, y);
@@ -93,25 +88,23 @@ export default function BindingCanvas() {
       ctx.rotate((angle + 270) * Math.PI / 180);
 
       // Scale and draw the image
-      const scale = 0.4; // Adjust scale as needed
-      const imageWidth = BINDING_LENGTH * scale;
-      const imageHeight = BINDING_WIDTH * scale;
+      const scale = 0.5; // Adjust scale as needed
       ctx.drawImage(
         bindingImageRef.current,
-        -imageWidth/2,
-        -imageHeight/2,
-        imageWidth,
-        imageHeight
+        -BINDING_LENGTH/2 * scale,
+        -BINDING_WIDTH/2 * scale,
+        BINDING_LENGTH * scale,
+        BINDING_WIDTH * scale
       );
 
       ctx.restore();
     };
 
-    // Draw left binding (front)
+    // Draw left binding (was previously right)
     drawTriangleBinding(stanceWidth/2 + setback, 0, values.frontAngle || 0);
 
-    // Draw right binding (back)
-    drawBindingImage(-stanceWidth/2 + setback, 0, values.backAngle || 0);
+    // Draw right binding (was previously left)
+    drawImageBinding(-stanceWidth/2 + setback, 0, values.backAngle || 0);
 
     // Draw measurements
     ctx.save();
