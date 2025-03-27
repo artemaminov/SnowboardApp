@@ -94,7 +94,7 @@ export default function BindingCanvas() {
     };
 
     // Function to draw the image binding (used for right binding)
-    const drawImageBinding = (x: number, y: number, angle: number) => {
+    const drawImageBinding = (x: number, y: number, angle: number, mirror: boolean = false) => {
       ctx.save();
       ctx.translate(x, y);
 
@@ -102,6 +102,11 @@ export default function BindingCanvas() {
       if (bindingImageRef.current && isInitializedRef.current) {
         // Rotate to make binding perpendicular to board
         ctx.rotate(angle * Math.PI / 180);
+
+        // Apply mirroring if needed
+        if (mirror) {
+          ctx.scale(-1, 1);
+        }
 
         // Scale and draw the image to fit binding dimensions
         const scaleWidth = BINDING_WIDTH;
@@ -141,11 +146,11 @@ export default function BindingCanvas() {
       ctx.restore();
     };
 
-    // Draw left binding (was previously right)
-    drawTriangleBinding(stanceWidth/2 + setback, 0, values.frontAngle || 0);
+    // Draw left binding
+    drawImageBinding(stanceWidth/2 + setback, 0, values.frontAngle || 0, true);
 
-    // Draw right binding (was previously left)
-    drawImageBinding(-stanceWidth/2 + setback, 0, values.backAngle || 0);
+    // Draw right binding
+    drawImageBinding(-stanceWidth/2 + setback, 0, values.backAngle || 0, false);
 
     // Draw measurements
     ctx.save();
