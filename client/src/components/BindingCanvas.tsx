@@ -12,18 +12,32 @@ const BINDING_LENGTH = 120;
 export default function BindingCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const bindingImageRef = useRef<HTMLImageElement | null>(null);
+  const isInitializedRef = useRef<boolean>(false);
   const form = useFormContext<InsertBindingProfile>();
   const values = form.watch();
 
-  // Load binding image
+  // Import binding image directly with Vite (handled at build time)
   useEffect(() => {
-    const img = new Image();
-    img.src = "/src/assets/binding.png";
-    img.onload = () => {
-      bindingImageRef.current = img;
-      // Redraw canvas when image loads
+    try {
+      const img = new Image();
+      // Use root-relative path instead of absolute path
+      img.src = './src/assets/binding.png';
+      img.onload = () => {
+        bindingImageRef.current = img;
+        isInitializedRef.current = true;
+        // Redraw canvas when image loads
+        updateCanvas();
+      };
+      img.onerror = (error) => {
+        console.error("Failed to load binding image", error);
+        isInitializedRef.current = true; // Still mark as initialized to show fallback
+        updateCanvas();
+      };
+    } catch (error) {
+      console.error("Error loading binding image", error);
+      isInitializedRef.current = true; // Still mark as initialized to show fallback
       updateCanvas();
-    };
+    }
   }, []);
 
   const updateCanvas = () => {
@@ -47,8 +61,10 @@ export default function BindingCanvas() {
 
     // Calculate binding positions
     const stanceWidth = (values.stanceWidth || 50) * 4;
-    const setbackDirection = values.stance === "goofy" ? 1 : -1; // Positive for goofy (right), negative for regular (left)
-    const setback = ((values.setback || 0) * setbackDirection); // Already in mm, multiply by direction
+    // For goofy: increasing setback moves bindings to the left (-X direction)
+    // For regular: increasing setback moves bindings to the right (+X direction)
+    const setbackDirection = values.stance === "goofy" ? -1 : 1;
+    const setback = ((values.setback || 0) * setbackDirection); // In mm, multiply by direction
 
     // Function to draw a binding triangle (used for left binding)
     const drawTriangleBinding = (x: number, y: number, angle: number) => {
@@ -80,23 +96,49 @@ export default function BindingCanvas() {
 
     // Function to draw the image binding (used for right binding)
     const drawImageBinding = (x: number, y: number, angle: number) => {
-      if (!bindingImageRef.current) return;
-
       ctx.save();
       ctx.translate(x, y);
-      // Add 90 degrees to make 0 perpendicular to board, plus 180 to flip image right side up
-      ctx.rotate((angle + 270) * Math.PI / 180);
-
-      // Scale and draw the image
-      const scale = 0.5; // Adjust scale as needed
-      ctx.drawImage(
-        bindingImageRef.current,
-        -BINDING_LENGTH/2 * scale,
-        -BINDING_WIDTH/2 * scale,
-        BINDING_LENGTH * scale,
-        BINDING_WIDTH * scale
-      );
-
+      
+      // If image is available, use it; otherwise fall back to a triangle with different color
+      if (bindingImageRef.current && isInitializedRef.current) {
+        // Add 90 degrees to make 0 perpendicular to board, plus 180 to flip image right side up
+        ctx.rotate((angle + 270) * Math.PI / 180);
+  
+        // Scale and draw the image to fit binding dimensions
+        const scaleWidth = BINDING_WIDTH * 1.2;
+        const scaleHeight = BINDING_LENGTH * 1.2;
+        
+        ctx.drawImage(
+          bindingImageRef.current,
+          -scaleWidth/2,
+          -scaleHeight/2,
+          scaleWidth,
+          scaleHeight
+        );
+      } else {
+        // Fallback to colored triangle if image is not available
+        // Add 90 degrees to make 0 perpendicular to board
+        ctx.rotate((angle + 90) * Math.PI / 180);
+  
+        // Draw binding triangle
+        ctx.beginPath();
+        ctx.moveTo(-BINDING_LENGTH/2, -BINDING_WIDTH/2); // Back left
+        ctx.lineTo(BINDING_LENGTH/2, 0); // Front center (toe)
+        ctx.lineTo(-BINDING_LENGTH/2, BINDING_WIDTH/2); // Back right
+        ctx.closePath();
+        ctx.fillStyle = "#3b82f6"; // Different color for right binding
+        ctx.fill();
+  
+        // Add toe indicator
+        ctx.beginPath();
+        ctx.moveTo(BINDING_LENGTH/2 - 20, -10);
+        ctx.lineTo(BINDING_LENGTH/2, 0);
+        ctx.lineTo(BINDING_LENGTH/2 - 20, 10);
+        ctx.strokeStyle = "#fff";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+      
       ctx.restore();
     };
 

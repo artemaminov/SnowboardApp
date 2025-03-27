@@ -122,10 +122,10 @@ export default function BindingForm() {
               <FormControl>
                 <Slider
                   min={0}
-                  max={700}
-                  step={0.5}
-                  value={[field.value * 10]}
-                  onValueChange={([value]) => field.onChange(value / 10)}
+                  max={70}
+                  step={1}
+                  value={[field.value]}
+                  onValueChange={([value]) => field.onChange(value)}
                 />
               </FormControl>
             </FormItem>
