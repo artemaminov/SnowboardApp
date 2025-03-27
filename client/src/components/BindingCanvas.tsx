@@ -55,9 +55,16 @@ export default function BindingCanvas() {
     ctx.rotate(Math.PI); // Rotate 180 degrees
 
     // Draw board
-    ctx.fillStyle = "#2563eb";
-    ctx.fillRect(-BOARD_LENGTH/2, -BOARD_WIDTH/2, BOARD_LENGTH, BOARD_WIDTH);
+    const boardImage = new Image();
+    boardImage.src = './snowboard.png';
+    boardImage.onload = () => {
+      ctx.drawImage(boardImage, -BOARD_LENGTH/2, -BOARD_WIDTH/2, BOARD_LENGTH, BOARD_WIDTH);
+      
+      // Redraw everything else after board image loads
+      drawBindings();
+    };
 
+    const drawBindings = () => {
     // Calculate binding positions
     const stanceWidth = (values.stanceWidth || 50) * 4;
     // For goofy: increasing setback moves bindings to the left (-X direction)
@@ -162,6 +169,7 @@ export default function BindingCanvas() {
     ctx.restore();
 
     ctx.restore();
+    };
   };
 
   useEffect(() => {
