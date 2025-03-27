@@ -18,7 +18,10 @@ export default function BindingCanvas() {
   // Load binding image
   useEffect(() => {
     const img = new Image();
-    img.src = "attached_assets/image_1742969172193.png";
+    img.src = "../../attached_assets/image_1742969172193.png";
+    img.onerror = (e) => {
+      console.error("Error loading binding image:", e);
+    };
     img.onload = () => {
       bindingImageRef.current = img;
       updateCanvas();
@@ -79,7 +82,10 @@ export default function BindingCanvas() {
 
     // Function to draw the actual binding image (used for right binding)
     const drawBindingImage = (x: number, y: number, angle: number) => {
-      if (!bindingImageRef.current) return;
+      if (!bindingImageRef.current) {
+        console.log("No binding image loaded yet");
+        return;
+      }
 
       ctx.save();
       ctx.translate(x, y);
