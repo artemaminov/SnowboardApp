@@ -97,16 +97,16 @@ export default function BindingCanvas() {
     const drawImageBinding = (x: number, y: number, angle: number) => {
       ctx.save();
       ctx.translate(x, y);
-      
+
       // If image is available, use it; otherwise fall back to a triangle with different color
       if (bindingImageRef.current && isInitializedRef.current) {
-        // Add 90 degrees to make 0 perpendicular to board, plus 180 to flip image right side up
-        ctx.rotate((angle + 270) * Math.PI / 180);
-  
+        // Add 90 degrees to make binding perpendicular to board
+        ctx.rotate((angle + 90) * Math.PI / 180);
+
         // Scale and draw the image to fit binding dimensions
         const scaleWidth = BINDING_WIDTH;
         const scaleHeight = BINDING_LENGTH;
-        
+
         ctx.drawImage(
           bindingImageRef.current,
           -scaleWidth/2,
@@ -118,7 +118,7 @@ export default function BindingCanvas() {
         // Fallback to colored triangle if image is not available
         // Add 90 degrees to make 0 perpendicular to board
         ctx.rotate((angle + 90) * Math.PI / 180);
-  
+
         // Draw binding triangle
         ctx.beginPath();
         ctx.moveTo(-BINDING_LENGTH/2, -BINDING_WIDTH/2); // Back left
@@ -127,7 +127,7 @@ export default function BindingCanvas() {
         ctx.closePath();
         ctx.fillStyle = "#3b82f6"; // Different color for right binding
         ctx.fill();
-  
+
         // Add toe indicator
         ctx.beginPath();
         ctx.moveTo(BINDING_LENGTH/2 - 20, -10);
@@ -137,7 +137,7 @@ export default function BindingCanvas() {
         ctx.lineWidth = 2;
         ctx.stroke();
       }
-      
+
       ctx.restore();
     };
 
