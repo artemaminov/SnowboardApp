@@ -20,8 +20,7 @@ export default function BindingCanvas() {
   useEffect(() => {
     try {
       const img = new Image();
-      // Use root-relative path instead of absolute path
-      img.src = './src/assets/binding.png';
+      img.src = '/binding.png';
       img.onload = () => {
         bindingImageRef.current = img;
         isInitializedRef.current = true;
@@ -105,8 +104,8 @@ export default function BindingCanvas() {
         ctx.rotate((angle + 270) * Math.PI / 180);
   
         // Scale and draw the image to fit binding dimensions
-        const scaleWidth = BINDING_WIDTH * 1.2;
-        const scaleHeight = BINDING_LENGTH * 1.2;
+        const scaleWidth = BINDING_WIDTH;
+        const scaleHeight = BINDING_LENGTH;
         
         ctx.drawImage(
           bindingImageRef.current,
