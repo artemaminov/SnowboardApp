@@ -54,21 +54,25 @@ export default function BindingCanvas() {
     ctx.translate(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
     ctx.rotate(Math.PI); // Rotate 180 degrees
 
+    const boardImageRef = useRef<HTMLImageElement | null>(null);
+
+    // Initialize board image if not already done
+    if (!boardImageRef.current) {
+      const img = new Image();
+      img.src = './snowboard.png';
+      boardImageRef.current = img;
+    }
+
     // Draw board
-    const boardImage = new Image();
-    boardImage.src = './snowboard.png';
-    boardImage.onload = () => {
+    if (boardImageRef.current?.complete) {
       ctx.save();
       ctx.rotate(Math.PI / 2); // Rotate 90 degrees clockwise
-      const aspectRatio = boardImage.width / boardImage.height;
+      const aspectRatio = boardImageRef.current.width / boardImageRef.current.height;
       const height = BOARD_LENGTH;
       const width = height * aspectRatio;
-      ctx.drawImage(boardImage, -width/2, -height/2, width, height);
+      ctx.drawImage(boardImageRef.current, -width/2, -height/2, width, height);
       ctx.restore();
-      
-      // Redraw everything else after board image loads
-      drawBindings();
-    };
+    }
 
     const drawBindings = () => {
     // Calculate binding positions
